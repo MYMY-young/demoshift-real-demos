@@ -66,6 +66,10 @@ figure video { width: 100%; max-width: 100%; aspect-ratio: 16 / 9; display: bloc
 figure.ref video { outline: 2px solid var(--accent); outline-offset: 2px; }
 figcaption { display: flex; justify-content: space-between; gap: 8px; font: 12px/1.3 var(--mono); color: var(--muted); }
 figcaption b { color: var(--ink); font-weight: 500; }
+.stat { font: 11.5px/1.3 var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.sub { font: 600 12px/1 var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-top: 6px; }
+figure.old video { object-fit: contain; }
+.legend { font: 12.5px/1.5 var(--mono); color: var(--muted); max-width: 80ch; }
 .controls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
 button { font: 500 13px/1 var(--mono); color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 9px 12px; cursor: pointer; }
 button:hover, button:focus-visible { border-color: var(--accent); color: var(--accent); outline: none; }
@@ -87,7 +91,7 @@ footer code { font: 12.5px var(--mono); color: var(--ink); }
     <div class="eyebrow">DemoShift-Bench · real human demonstrations</div>
     <h1>Four cameras, one demonstration</h1>
     <p class="lede">Each task was performed once and filmed by four synchronized GoPro cameras. The egocentric <em>original</em> is the reference demonstration; the other three show the same moment from a different viewpoint and form the benchmark's viewpoint axis. Clips are cut to the span of the original take and play in lockstep.</p>
-    <div class="meta"><span><b>Filmed</b> 2026-11-04</span><span><b>Tasks</b> 6 of 7 (microwave pending)</span><span><b>Cameras</b> 4 × GoPro, 3840×2160, 29.97 fps</span><span><b>Sync</b> embedded timecode; front camera clock +1.0 s, corrected</span></div>
+    <div class="meta"><span><b>Filmed</b> 2026-11-04</span><span><b>Tasks</b> 6 of 7 (microwave pending)</span><span><b>Cameras</b> 4 × GoPro, 3840×2160, 29.97 fps</span><span><b>Sync</b> embedded timecode; front camera clock +1.0 s, corrected</span><span><b>Earlier takes</b> fast · slow · distractors · moving (same tasks, filmed before 11-04)</span></div>
   </header>
 
   <div class="views" aria-label="Camera views">
@@ -97,10 +101,12 @@ footer code { font: 12.5px var(--mono); color: var(--ink); }
     <div class="view"><span class="k">front</span><span class="d">Far, facing the demonstrator; full body visible, table under half the frame.</span></div>
   </div>
 
+  <p class="legend">Under each clip: <b>bright</b> = mean luminance (0–255), <b>sat</b> = mean saturation (0–255), <b>warm</b> = LAB b* offset (+ yellow / − blue), averaged over 8 frames.</p>
   <nav class="jump" aria-label="Tasks" id="jump"></nav>
   <main id="takes" style="display:grid;gap:44px"></main>
+  <section class="take" id="microwave"><div class="take-head"><h2>microwave<small>open_microwave</small></h2><div class="facts"><span>11-04 take pending</span></div></div><p class="caption">Caption: <q>Open the microwave door with one hand.</q></p><div class="sub">Earlier takes (not synced, own length)</div><div class="strip" id="mw"></div></section>
 
-  <div class="note"><b>open_microwave</b> has not been filmed yet. It will be recorded with the same four camera positions and added here.</div>
+  <div class="note"><b>open_microwave</b>: the 11-04 four-camera take has not been filmed yet; only the earlier takes are shown.</div>
 
   <footer>
     <span>Videos are web previews (640×360). The benchmark feeds Zero-WAM a center crop of each take at 448×320, 12 fps.</span>
@@ -109,6 +115,9 @@ footer code { font: 12.5px var(--mono); color: var(--ink); }
 </div>
 
 <script>
+const STATS = {"blocks_front": {"bright": 117, "sat": 31, "warm": 1.7, "dur": 7.07, "portrait": false}, "blocks_old_distractors": {"bright": 128, "sat": 32, "warm": 4.6, "dur": 5.97, "portrait": false}, "blocks_old_fast": {"bright": 133, "sat": 28, "warm": 4.4, "dur": 4.43, "portrait": false}, "blocks_old_moving": {"bright": 129, "sat": 27, "warm": 3.9, "dur": 6.5, "portrait": false}, "blocks_old_slow": {"bright": 133, "sat": 26, "warm": 4.1, "dur": 8.7, "portrait": false}, "blocks_original": {"bright": 165, "sat": 11, "warm": 0.7, "dur": 7.07, "portrait": false}, "blocks_third": {"bright": 124, "sat": 29, "warm": -0.4, "dur": 7.07, "portrait": false}, "blocks_topview": {"bright": 170, "sat": 5, "warm": -0.3, "dur": 7.07, "portrait": false}, "bread_front": {"bright": 117, "sat": 31, "warm": 2.0, "dur": 5.5, "portrait": false}, "bread_old_distractors": {"bright": 136, "sat": 45, "warm": 7.7, "dur": 5.7, "portrait": false}, "bread_old_fast": {"bright": 139, "sat": 43, "warm": 7.9, "dur": 3.87, "portrait": false}, "bread_old_moving": {"bright": 133, "sat": 40, "warm": 6.1, "dur": 6.67, "portrait": false}, "bread_old_slow": {"bright": 144, "sat": 44, "warm": 7.7, "dur": 7.8, "portrait": false}, "bread_original": {"bright": 155, "sat": 32, "warm": 3.6, "dur": 5.5, "portrait": false}, "bread_third": {"bright": 121, "sat": 35, "warm": 0.7, "dur": 5.5, "portrait": false}, "bread_topview": {"bright": 166, "sat": 19, "warm": -0.2, "dur": 5.5, "portrait": false}, "cup_front": {"bright": 116, "sat": 30, "warm": 1.5, "dur": 4.83, "portrait": false}, "cup_old_distractors": {"bright": 138, "sat": 27, "warm": 2.8, "dur": 5.6, "portrait": false}, "cup_old_fast": {"bright": 138, "sat": 26, "warm": 2.6, "dur": 2.53, "portrait": false}, "cup_old_moving": {"bright": 124, "sat": 31, "warm": 2.3, "dur": 6.53, "portrait": false}, "cup_old_slow": {"bright": 139, "sat": 25, "warm": 2.6, "dur": 6.2, "portrait": false}, "cup_original": {"bright": 164, "sat": 11, "warm": 0.5, "dur": 4.83, "portrait": false}, "cup_third": {"bright": 123, "sat": 30, "warm": -0.6, "dur": 4.83, "portrait": false}, "cup_topview": {"bright": 169, "sat": 7, "warm": -1.0, "dur": 4.83, "portrait": false}, "microwave_old_distractors": {"bright": 99, "sat": 47, "warm": 3.4, "dur": 4.77, "portrait": false}, "microwave_old_fast": {"bright": 98, "sat": 48, "warm": 4.5, "dur": 3.03, "portrait": false}, "microwave_old_moving": {"bright": 98, "sat": 49, "warm": 4.6, "dur": 8.17, "portrait": false}, "microwave_old_slow": {"bright": 102, "sat": 47, "warm": 4.2, "dur": 8.63, "portrait": false}, "scale_front": {"bright": 117, "sat": 32, "warm": 2.2, "dur": 5.57, "portrait": false}, "scale_old_distractors": {"bright": 143, "sat": 19, "warm": -0.9, "dur": 5.37, "portrait": false}, "scale_old_fast": {"bright": 139, "sat": 24, "warm": 0.8, "dur": 2.33, "portrait": false}, "scale_old_moving": {"bright": 135, "sat": 21, "warm": 0.9, "dur": 6.43, "portrait": false}, "scale_old_slow": {"bright": 136, "sat": 26, "warm": 1.3, "dur": 7.2, "portrait": false}, "scale_original": {"bright": 157, "sat": 13, "warm": -0.7, "dur": 5.57, "portrait": false}, "scale_third": {"bright": 123, "sat": 31, "warm": -0.5, "dur": 5.57, "portrait": false}, "scale_topview": {"bright": 166, "sat": 9, "warm": -0.7, "dur": 5.57, "portrait": false}, "seal_front": {"bright": 117, "sat": 31, "warm": 1.5, "dur": 5.13, "portrait": false}, "seal_old_distractors": {"bright": 135, "sat": 24, "warm": -0.3, "dur": 3.57, "portrait": false}, "seal_old_fast": {"bright": 141, "sat": 24, "warm": -0.1, "dur": 2.97, "portrait": false}, "seal_old_moving": {"bright": 136, "sat": 25, "warm": 0.9, "dur": 5.8, "portrait": false}, "seal_old_slow": {"bright": 143, "sat": 26, "warm": 0.5, "dur": 6.47, "portrait": false}, "seal_original": {"bright": 164, "sat": 13, "warm": 0.1, "dur": 5.13, "portrait": false}, "seal_third": {"bright": 124, "sat": 31, "warm": -0.4, "dur": 5.13, "portrait": false}, "seal_topview": {"bright": 169, "sat": 8, "warm": -0.5, "dur": 5.13, "portrait": false}, "stapler_front": {"bright": 116, "sat": 33, "warm": 1.9, "dur": 5.73, "portrait": false}, "stapler_old_distractors": {"bright": 156, "sat": 27, "warm": 0.7, "dur": 4.2, "portrait": false}, "stapler_old_fast": {"bright": 154, "sat": 26, "warm": 0.6, "dur": 1.93, "portrait": false}, "stapler_old_moving": {"bright": 128, "sat": 36, "warm": 0.4, "dur": 4.97, "portrait": false}, "stapler_old_slow": {"bright": 155, "sat": 26, "warm": 0.6, "dur": 6.3, "portrait": false}, "stapler_original": {"bright": 161, "sat": 17, "warm": -0.2, "dur": 5.73, "portrait": false}, "stapler_third": {"bright": 124, "sat": 31, "warm": -0.7, "dur": 5.73, "portrait": false}, "stapler_topview": {"bright": 168, "sat": 10, "warm": -0.8, "dur": 5.73, "portrait": false}};
+const OLD = ["fast", "slow", "distractors", "moving"];
+const statLine = k => { const x = STATS[k]; return x ? `bright ${x.bright} · sat ${x.sat} · warm ${x.warm > 0 ? "+" : ""}${x.warm}` : ""; };
 const VIEWS = ["original", "topview", "third", "front"];
 const TASKS = [
   { id: "stapler", name: "move_stapler_pad", arm: "left", frames: 172, tc: "17:20:20;12",
@@ -128,8 +137,13 @@ const jump = document.getElementById("jump"), host = document.getElementById("ta
 for (const t of TASKS) {
   const a = document.createElement("a"); a.href = "#" + t.id; a.textContent = t.id; jump.appendChild(a);
 }
-const m = document.createElement("a"); m.className = "todo"; m.textContent = "microwave · pending"; m.href = "#takes"; jump.appendChild(m);
+const m = document.createElement("a"); m.className = "todo"; m.textContent = "microwave · earlier takes only"; m.href = "#microwave"; jump.appendChild(m);
 
+function oldFig(id, v) {
+  const k = `${id}_old_${v}`, x = STATS[k] || {};
+  return `<figure class="old"><video src="videos/${k}.mp4" muted playsinline loop controls preload="metadata" aria-label="${id} earlier ${v} take"></video>
+    <figcaption><b>${v}</b><span>${x.dur ? x.dur + " s" : ""}</span></figcaption><span class="stat">${statLine(k)}</span></figure>`;
+}
 function fmt(s) { return (Math.max(0, s) || 0).toFixed(2) + " s"; }
 
 for (const t of TASKS) {
@@ -145,6 +159,7 @@ for (const t of TASKS) {
       <figure class="${v === "original" ? "ref" : ""}">
         <video src="videos/${t.id}_${v}.mp4" muted playsinline preload="auto" aria-label="${t.id} ${v} view"></video>
         <figcaption><b>${v}</b><span>${v === "original" ? "reference" : "viewpoint"}</span></figcaption>
+        <span class="stat">${statLine(t.id + "_" + v)}</span>
       </figure>`).join("")}
     </div>
     <div class="controls">
@@ -153,7 +168,9 @@ for (const t of TASKS) {
       <button type="button" data-act="slow" id="slow-${t.id}" aria-pressed="false">0.5×</button>
       <input type="range" id="seek-${t.id}" min="0" max="1000" value="0" aria-label="Scrub ${t.id}">
       <span class="clock" id="clock-${t.id}">0.00 s</span>
-    </div>`;
+    </div>
+    <div class="sub">Earlier takes (not synced, own length)</div>
+    <div class="strip">${OLD.map(v => oldFig(t.id, v)).join("")}</div>`;
   host.appendChild(sec);
 
   const vids = [...sec.querySelectorAll("video")], lead = vids[0];
@@ -174,6 +191,7 @@ for (const t of TASKS) {
   });
   lead.addEventListener("ended", () => { all(v => v.pause()); setPlaying(false); });
 }
+document.getElementById("mw").innerHTML = OLD.map(v => oldFig("microwave", v)).join("");
 </script>
 
 </body>
